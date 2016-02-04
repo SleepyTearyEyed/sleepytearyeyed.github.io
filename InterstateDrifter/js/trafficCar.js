@@ -5,6 +5,7 @@ const TRAFFIC_CAR_MIN_SPEED = 8;
 const TRAFFIC_CAR_MAX_SPEED = 12;
 const TRAFFIC_CAR_SPEED_MAX_DELTA = 3;
 const CLOSE_ENOUGH_TO_COLLIDE = 20;
+const CLOSE_ENOUGH_TO_AVOID = 60;
 const COLLISION_EFFECT_TIME = 15;
 const COLLISION_EFFECT_MULT = 3;
 
@@ -104,7 +105,7 @@ function trafficCarClass() {
     }
 
     this.resetBottom = function() {
-        this.y = canvas.height;
+        this.y = TRACK_ROWS * TRACK_H;
         this.startOnTrack();
     }
 
@@ -123,7 +124,7 @@ function trafficCarClass() {
             this.readyToRemove = true;
         }
 
-        if (this.y > canvas.height) {
+        if (this.y > TRACK_ROWS * TRACK_H) {
             //this.resetTop();
             this.readyToRemove = true;
         }
@@ -186,7 +187,14 @@ function trafficCarClass() {
         this.framesTillLaneSwitch--;
 
         if (this.framesTillLaneSwitch < 0 && this.steeringOverrideDir == 0) {
-            this.lanePerc = randomInRange(LANE_MARGIN_PERC, 1.0 - LANE_MARGIN_PERC);
+            //this.lanePerc = randomInRange(LANE_MARGIN_PERC, 1.0 - LANE_MARGIN_PERC);
+            if (Math.random() < 0.5) {
+                this.lanePerc = 1.0 - 0.625;
+            }
+            else {
+                this.lanePerc = 1.0 - 0.875;
+            }
+
             this.framesTillLaneSwitch = Math.random() * 30 + 30;
             this.speed += randomInRange(-TRAFFIC_CAR_SPEED_MAX_DELTA, TRAFFIC_CAR_SPEED_MAX_DELTA);
 
