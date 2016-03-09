@@ -2,8 +2,13 @@ var canvas;
 var canvasContext;
 var zoom = 1;
 var zoomGoal = 1;
+var timeTenths;
+var attractLoop = true;
 const ZOOM_MAX = 1.5;
 const ZOOM_MIN = 0.5;
+const RACE_TIME_SECONDS = 10;
+const TENTHS_PER_SECOND = 10;
+const CAR_PASS_RIGHT_TIME_BONUS = 5;
 
 // The player as represented by the car.
 var p1 = new carClass();
@@ -35,7 +40,7 @@ function loadingDoneSoStartGame() {
     initTrack();
     // Player car.
     p1.initCar("Drifter");
-
+    resetTimer();
     initInput();
 
     // The game loop.
@@ -45,7 +50,33 @@ function loadingDoneSoStartGame() {
         moveEverything();
         drawEverything();
     }, 1000 / framesPerSecond); // 1000 equals one sec. Divide by frames to get fps.
+
+    setInterval(function()
+    {
+        if (attractLoop == false) {
+            timeTenths--;
+            if (timeTenths < 0) {
+                timeTenths = 0;
+                attractLoop = true;
+            }
+        }
+    }, 100);
 }
+
+function reset(){
+    initTrack();
+    // Player car.
+    p1.carReset();
+    trackCenterCar();
+    resetTimer();
+    zoom = ZOOM_MIN;
+    trafficCars = [];
+}
+
+function resetTimer(){
+    timeTenths = RACE_TIME_SECONDS * TENTHS_PER_SECOND;
+}
+
 // Everything gets moved then drawn. 
 // Updating the car's position and the level first then draw them on screen.
 function moveEverything() {
@@ -71,7 +102,7 @@ function moveEverything() {
 
                         trafficCars[i].speed = trafficCars[ii].speed;
                         trafficCars[ii].speed = tempSpeedI;
-                        console.log("bumped" + i + " : " + ii);
+                        //console.log("bumped" + i + " : " + ii);
                     }
                 }
             }
@@ -95,6 +126,7 @@ function drawEverything() {
     clearScreen();
     canvasContext.save();
     canvasContext.translate(gameAreaWidth/2, p1.carY - canvas.height);
+    //zoom = 0.2; // To debug boundaries.
     canvasContext.scale(zoom, zoom);
     canvasContext.translate(-p1.carX, -p1.carY);
     zoomGoal = ZOOM_MIN + (1.0 - p1.carSpeed / CAR_MAX_SPEED) * (ZOOM_MAX - ZOOM_MIN);

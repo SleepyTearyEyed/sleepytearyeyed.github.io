@@ -139,7 +139,7 @@ function carClass() {
             canvasContext.lineTo(carPoints[i].x, carPoints[i].y);
         }
 
-        canvasContext.strokeStyle = "white";
+        canvasContext.strokeStyle = "orange";
         canvasContext.stroke();
         canvasContext.restore();
     }
@@ -162,11 +162,28 @@ function carClass() {
 
         this.carX = this.homeX;
         this.carY = this.homeY;
+        this.carSpeed = 0;
+        this.clearControls();      
+    }
+
+    this.clearControls = function() {
+        this.keyHeld_Gas = false;
+        this.keyHeld_TurnLeft = false;
+        this.keyHeld_TurnRight = false;
     }
 
     this.carMove = function() {
         var nextX = this.carX;
         var nextY = this.carY;
+
+        if (attractLoop) {
+            this.keyHeld_Gas = true;
+
+            if (Math.random < 0.05) {
+                this.keyHeld_TurnLeft = !this.keyHeld_TurnLeft;
+                this.keyHeld_TurnRight = !this.keyHeld_TurnRight;
+            }
+        }
 
         // Position of the car vertically based on speed
         var carYRange = this.homeY - CAR_MIN_Y;
