@@ -7,21 +7,12 @@ const TRACK_WALL_MARGIN = 1;
 var trackVector = [];
 
 // Road slope
-const TRACK_ROAD_SLOPE_MIN = 0.2;
-const TRACK_ROAD_SLOPE_MAX = 0.4;
-const FRAMES_TILL_ROAD_SLOPE_CHANGE_MIN = 30;
-const FRAMES_TILL_ROAD_SLOPE_CHANGE_MAX = 60;
-const TRACK_PERC_ANGLED_ROADS = 0.99;
 var roadCenterColumn = 6;
 var roadXDelta = 0;
 var framesTillRoadChange = 0;
 
 // Road thickness
-const FRAMES_TILL_ROAD_WIDTH_CHANGE_MIN = 30;
-const FRAMES_TILL_ROAD_WIDTH_CHANGE_MAX = 60;
 const TRACK_PERC_ROAD_WIDTH_STABLE = 0.70;
-const TRACK_ROAD_WIDTH_MIN = 4;
-const TRACK_ROAD_WIDTH_MAX = 10;
 const TRACK_ROAD_WIDTH_DELTA_MIN = 0.2;
 const TRACK_ROAD_WIDTH_DELTA_MAX = 0.5;
 const TRACK_ROAD_WIDTH_MIN_FOR_4_LANES = 8;
@@ -31,6 +22,12 @@ var framesTillRoadWidthChange = 0;
 
 // UI
 const UI_TILE_THICKNESS = 4;
+
+// Track colors
+var centerLineColor = "yellow";
+var dashLineColor = "gray";
+var edgeLineColor = "red";
+var trackLineColor = "white";
 
 function initTrack() {
     trackVector = [];
@@ -193,7 +190,7 @@ function updateTrack() {
 function drawNonRoad(segmentTopLeftX, segmentTopLeftY)
 {
     var lineOverdrawLen = 600;
-
+    canvasContext.lineWidth = 1;
         // Area left of left road.
     for (var row = 0; row < trackVector.length; row++) {
         var leftSideTile = trackVector[row].colCenter - trackVector[row].roadSize/2;
@@ -274,33 +271,34 @@ function drawRoadEdgeSpecial(segmentTopLeftY, roadSideMult, roadColor) {
 }
 
 function drawLeftRoadEdge(segmentTopLeftY) {
-    drawRoadEdge(segmentTopLeftY, -1, "red");
+    drawRoadEdge(segmentTopLeftY, -1, edgeLineColor);
 }
 
 function drawRightRoadEdge(segmentTopLeftY) {
-    drawRoadEdge(segmentTopLeftY, 1, "red");
+    drawRoadEdge(segmentTopLeftY, 1, edgeLineColor);
 }
 
 function drawCenterLine(segmentTopLeftY) {
-    drawRoadEdge(segmentTopLeftY, -0.02, "yellow");
-    drawRoadEdge(segmentTopLeftY, 0.02, "yellow");
-    drawRoadEdgeSpecial(segmentTopLeftY, -.5, "gray");
-    drawRoadEdgeSpecial(segmentTopLeftY, .5, "gray");
+    drawRoadEdge(segmentTopLeftY, -0.02, centerLineColor);
+    drawRoadEdge(segmentTopLeftY, 0.02, centerLineColor);
+    drawRoadEdgeSpecial(segmentTopLeftY, -.5, dashLineColor);
+    drawRoadEdgeSpecial(segmentTopLeftY, .5, dashLineColor);
 }
 
 function drawTrack() {
     var trackIndex = 0;
     var segmentTopLeftX = 0;
     var segmentTopLeftY = p1.carOdom - TRACK_H;
-    canvasContext.strokeStyle="white";
+    canvasContext.strokeStyle=trackLineColor;
 
     segmentTopLeftY = p1.carOdom - TRACK_H;
 
     drawNonRoad(segmentTopLeftX, segmentTopLeftY);
 
+    canvasContext.lineWidth = 1.5;
     drawLeftRoadEdge(segmentTopLeftY);
-
-    drawCenterLine(segmentTopLeftY);
-
     drawRightRoadEdge(segmentTopLeftY);
+
+    canvasContext.lineWidth = 1;
+    drawCenterLine(segmentTopLeftY);
 } // End of func
