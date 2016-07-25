@@ -20,6 +20,7 @@ var stageOne = {
     "spawnFreq": 0.02,
     "gasSpeed": 0.21,
     "maxSpeed": 13,
+    "carAngDampen": 1.0,
     "trackMinThickness": 8,
     "trackMaxThickness": 10,
     "trackRoadSlopeMin": 0.2,
@@ -29,10 +30,12 @@ var stageOne = {
     "framesTillRoadChangeMax": 130,
     "framesTillRoadSlopeChangeMin": 20,
     "framesTillRoadSlopeChangeMax": 50,
+    "framesTillTrafficCarsLaneChangeMin": 60,
+    "framesTillTrafficCarsLaneChangeMax": 120,
     "startDistance": 0.0,
     "zoomMin": 0.5,
     "zoomMax": 1.5
-}
+};
 
 var stageTwo = {
     "color": "#ff0000",
@@ -40,6 +43,7 @@ var stageTwo = {
     "spawnFreq": 0.15,
     "gasSpeed": 0.21,
     "maxSpeed": 13,
+    "carAngDampen": 1.0,
     "trackMinThickness": 8,
     "trackMaxThickness": 10,
     "trackRoadSlopeMin": 0.2,
@@ -49,10 +53,12 @@ var stageTwo = {
     "framesTillRoadChangeMax": 130,
     "framesTillRoadSlopeChangeMin": 20,
     "framesTillRoadSlopeChangeMax": 50,
+    "framesTillTrafficCarsLaneChangeMin": 60,
+    "framesTillTrafficCarsLaneChangeMax": 120,
     "startDistance": 3,
     "zoomMin": 0.5,
     "zoomMax": 1.5
-}
+};
 
 var stageThree = {
     "color": "#00ffff",
@@ -60,6 +66,7 @@ var stageThree = {
     "spawnFreq": 0.08,
     "gasSpeed": 0.21,
     "maxSpeed": 13,
+    "carAngDampen": 1.0,
     "trackMinThickness": 5,
     "trackMaxThickness": 10,
     "trackRoadSlopeMin": 0.2,
@@ -69,10 +76,12 @@ var stageThree = {
     "framesTillRoadChangeMax": 20,
     "framesTillRoadSlopeChangeMin": 20,
     "framesTillRoadSlopeChangeMax": 50,
+    "framesTillTrafficCarsLaneChangeMin": 60,
+    "framesTillTrafficCarsLaneChangeMax": 120,
     "startDistance": 6,
     "zoomMin": 0.5,
     "zoomMax": 1.5
-}
+};
 
 var stageFour = {
     "color": "#ffbbbb",
@@ -80,6 +89,7 @@ var stageFour = {
     "spawnFreq": 0.02,
     "gasSpeed": 0.4,
     "maxSpeed": 16,
+    "carAngDampen": 0.5,
     "trackMinThickness": 8,
     "trackMaxThickness": 10,
     "trackRoadSlopeMin": 0.2,
@@ -89,10 +99,12 @@ var stageFour = {
     "framesTillRoadChangeMax": 130,
     "framesTillRoadSlopeChangeMin": 20,
     "framesTillRoadSlopeChangeMax": 50,
+    "framesTillTrafficCarsLaneChangeMin": 60,
+    "framesTillTrafficCarsLaneChangeMax": 120,
     "startDistance": 9,
     "zoomMin": 0.6,
     "zoomMax": 1.5
-}
+};
 
 var stageTuning = [stageOne, stageTwo, stageThree, stageFour];
 var stageNow = 0;
