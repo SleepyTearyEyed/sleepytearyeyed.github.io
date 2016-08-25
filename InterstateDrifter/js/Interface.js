@@ -1,11 +1,11 @@
 function drawCarUI (forCar) {
         var speedometerX = canvas.width - (UI_TILE_THICKNESS / 2) * TRACK_W;
-        var speedometerY = canvas.height - TRACK_H;
+        var speedometerY = 65;
         var carSpeedRange = stageTuning[stageNow].maxSpeed - CAR_MIN_SPEED;
 
         canvasContext.fillStyle = "black";
-        canvasContext.fillRect(canvas.width - UI_TILE_THICKNESS * TRACK_W, 0,
-            UI_TILE_THICKNESS * TRACK_W, canvas.height);
+        //canvasContext.fillRect(canvas.width - UI_TILE_THICKNESS * TRACK_W, 0,
+            //UI_TILE_THICKNESS * TRACK_W, canvas.height);
 
         forCar.needleWobbleOsc += Math.random() * 0.07;
 
@@ -35,11 +35,11 @@ function drawCarUI (forCar) {
             forCar.drawAngSeg(speedometerX, speedometerY, r, needleLength * 0.9, needleLength * 1.2, "white", 2);
         }
 
-        canvasContext.beginPath();
+        /*canvasContext.beginPath();
         canvasContext.moveTo(canvas.width - UI_TILE_THICKNESS * TRACK_W, 0);
         canvasContext.lineTo(canvas.width - UI_TILE_THICKNESS * TRACK_W, canvas.height);
         canvasContext.strokeStyle = stageTuning[stageNow].color;
-        canvasContext.stroke();
+        canvasContext.stroke();*/
 
         // Speedometer needle.
         colorLine(speedometerX, speedometerY, needleEndX, needleEndY, "red", 1);
@@ -57,6 +57,10 @@ function drawCarUI (forCar) {
         // Text center of UI
         var centerTextX = speedometerX + needleLength * 0.75;
 
+        var whole = Math.floor(timeTenths / 10);
+        var decimal = timeTenths - whole * 10;
+        var displayTextString = whole + "." + decimal;
+
         if (attractLoop == false) {
             // Speed text
             var speedOutput = forCar.needleSpeed * 15.0;
@@ -66,32 +70,43 @@ function drawCarUI (forCar) {
             canvasContext.font="8px Poiret One";
             canvasContext.fillText(speedOutput, centerTextX, speedometerY + 25);
 
+            canvasContext.font="30px Poiret One";
+            canvasContext.textAlign = "center";
+
             // Distance in miles.
-            var distanceMiles = forCar.totalDistance * MILES_PER_PIXEL;
+            /*var distanceMiles = forCar.totalDistance * MILES_PER_PIXEL;
 
             if (stageNow < stageTuning.length - 1 && distanceMiles > stageTuning[stageNow + 1].startDistance) {
                 stageNow ++;
             }
 
-            canvasContext.font="30px Poiret One";
-            canvasContext.textAlign = "center";
             canvasContext.fillText("Distance", centerTextX - 20, canvas.height / 2 - 35);
             canvasContext.textAlign = "left";
-            canvasContext.fillText(distanceMiles.toFixed(1), centerTextX - 50, canvas.height / 2);
+            canvasContext.fillText(distanceMiles.toFixed(1), centerTextX - 45, canvas.height / 2);*/
 
             // Timer
-            var whole = Math.floor(timeTenths / 10);
-            var decimal = timeTenths - whole * 10;
+            var timeX = 50;
+            var timeY = 55;
+
             canvasContext.textAlign = "center";
-            canvasContext.fillText("Timer", centerTextX - 20, canvas.height / 4 - 35);
+            canvasContext.fillText("Time", timeX, timeY);
             canvasContext.textAlign = "left";
-            canvasContext.fillText(whole + "." + decimal, centerTextX - 45, canvas.height / 4);
+            canvasContext.fillText(displayTextString, timeX - 25, timeY + 35);
 
             // Score
+            var scoreX = canvas.width / 2;
+            var scoreY = timeY;
+
             canvasContext.textAlign = "center";
-            canvasContext.fillText("Score", centerTextX - 20, canvas.height * 3/ 4 - 35);
+            canvasContext.fillText("Score/Goal", scoreX, scoreY);
+            //canvasContext.textAlign = "left";
+            canvasContext.fillText(currentScore + "/" + currentScoreGoal, scoreX, scoreY + 35);
+
+            // Score goal
+            /*canvasContext.textAlign = "center";
+            canvasContext.fillText("Score goal", centerTextX - 20, canvas.height * 5 / 6 - 35);
             canvasContext.textAlign = "left";
-            canvasContext.fillText(currentScore, centerTextX - 45, canvas.height * 3 / 4);
+            canvasContext.fillText(currentScoreGoal, centerTextX - 45, canvas.height * 5 / 6);*/
         }
         else {
             canvasContext.font="50px Poiret One";
@@ -99,8 +114,15 @@ function drawCarUI (forCar) {
             canvasContext.fillText("Interstate Drifter", (canvas.width - UI_TILE_THICKNESS * TRACK_W) / 2, canvas.height / 2);
             canvasContext.font="25px Poiret One";
             canvasContext.fillText("By Paul Diaz", (canvas.width - UI_TILE_THICKNESS * TRACK_W) / 2, canvas.height / 2 + 40);
-            canvasContext.fillText("Pass cars to extend time!", (canvas.width - UI_TILE_THICKNESS * TRACK_W) / 2, canvas.height / 2 + 100);
+
+            if (timeTenths > 0 ){
+                canvasContext.fillText("Game over. Your time was " + displayTextString, (canvas.width - UI_TILE_THICKNESS * TRACK_W) / 2, canvas.height / 2 + 100);
+            }
+            else {
+                canvasContext.fillText("Near miss to get points!", (canvas.width - UI_TILE_THICKNESS * TRACK_W) / 2, canvas.height / 2 + 100);
+            }
             canvasContext.fillText("SPACEBAR", canvas.width - (UI_TILE_THICKNESS * TRACK_W) / 2, canvas.height / 2 + 10);
             canvasContext.fillText("to start!", canvas.width - (UI_TILE_THICKNESS * TRACK_W) / 2, canvas.height / 2 + 35);
+
         }
     }

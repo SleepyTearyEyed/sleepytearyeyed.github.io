@@ -5,14 +5,16 @@ var zoomGoal = 1;
 var timeTenths;
 var attractLoop = true;
 var currentScore = 0;
-const RACE_TIME_SECONDS = 30;
-const TENTHS_PER_SECOND = 10;
+var currentScoreGoal = 0;
+//const RACE_TIME_SECONDS = 180;
+//const TENTHS_PER_SECOND = 10;
 const CAR_PASS_NORTHBOUND_SCORE_BONUS = 50;
 const CAR_PASS_SOUTHBOUND_SCORE_BONUS = 10;
 
 // The player as represented by the car.
 var p1 = new carClass();
 var trafficCars = [];
+var pointPoppers = [];
 
 //Audio
 var backgroundMusic = new BackgroundMusicClass();
@@ -38,6 +40,14 @@ function spawnTrafficCar() {
     trafficCars.push(tempCar);
 }
 
+function spawnPointPopper(scoreVal, pointPopperX, pointPopperY) {
+    var tempPopper = new PointPop();
+
+    tempPopper.init(scoreVal, pointPopperX, pointPopperY);
+    pointPoppers.push(tempPopper);
+    currentScore += scoreVal;
+}
+
 function loadingDoneSoStartGame() {
     // Typical framerate for the web.
     var framesPerSecond = 30;
@@ -59,11 +69,10 @@ function loadingDoneSoStartGame() {
     setInterval(function()
     {
         if (attractLoop == false) {
-            //timeTenths--;
-            if (timeTenths < 0) {
+            timeTenths++;
+            /*if (timeTenths < 0) {
                 timeTenths = 0;
-                attractLoop = true;
-            }
+            }*/
         }
     }, 100);
 }
@@ -78,11 +87,36 @@ function reset(){
     trafficCars = [];
     stageNow = 0;
     currentScore = 0;
+    currentScoreGoal = stageTuning[stageNow].pointsPerStage;
 }
 
 function resetTimer(){
-    timeTenths = RACE_TIME_SECONDS * TENTHS_PER_SECOND;
+    timeTenths = 0;//RACE_TIME_SECONDS * TENTHS_PER_SECOND;
 }
+
+function levelUp(isCheating) {
+    if (stageNow < stageTuning.length - 1) {
+        if (isCheating) {
+            currentScore = currentScoreGoal;
+        }
+        stageNow++;
+        currentScoreGoal += stageTuning[stageNow].pointsPerStage;
+    }
+    else {
+        console.log("Error, exceeded max level.")
+    }
+};
+
+function levelDown() {
+    if (stageNow > 0){
+        currentScoreGoal -= stageTuning[stageNow].pointsPerStage;
+        stageNow --;
+        currentScore = currentScoreGoal - stageTuning[stageNow].pointsPerStage;
+    }
+    else {
+        attractLoop = true;
+    }
+};
 
 // Everything gets moved then drawn. 
 // Updating the car's position and the level first then draw them on screen.
@@ -90,10 +124,21 @@ function moveEverything() {
     updateTrack();
     p1.carMove();
 
+    if (currentScore >= currentScoreGoal)
+    {
+        if (stageNow < stageTuning.length - 1){
+            levelUp(false);
+        }
+        else {
+            attractLoop = true;
+        }
+    }
+
     if (trafficCars.length < stageTuning[stageNow].maxCars && Math.random() < stageTuning[stageNow].spawnFreq) {
         spawnTrafficCar();
     }
 
+    // Car collisions below
     for (var i = 0; i < trafficCars.length; i ++) {
         for (var ii = i+1; ii < trafficCars.length; ii ++) {
             var laneDiff = Math.abs(trafficCars[i].lanePerc - trafficCars[ii].lanePerc);
@@ -115,7 +160,8 @@ function moveEverything() {
             }
         }
     }
-    
+
+    // Updating car positions
     for (var i = 0; i < trafficCars.length; i ++) {
         trafficCars[i].move();
     }
@@ -125,6 +171,17 @@ function moveEverything() {
             trafficCars.splice(i, 1);
         }
     }
+
+    // Updating point popper positions
+    for (var i = 0; i < pointPoppers.length; i ++) {
+        pointPoppers[i].move();
+    }
+
+    for (var i = pointPoppers.length-1; i >= 0; i--) {
+        if (pointPoppers[i].readyToRemove) {
+            pointPoppers.splice(i, 1);
+        }
+    }
 }
 
 function drawEverything() {
@@ -132,7 +189,7 @@ function drawEverything() {
 
     clearScreen();
     canvasContext.save();
-    canvasContext.translate(gameAreaWidth/2, p1.carY - canvas.height);
+    canvasContext.translate(canvas.width / 2, p1.carY - canvas.height);
     //zoom = .35; // To debug boundaries.
     canvasContext.scale(zoom, zoom);
     canvasContext.translate(-p1.carX, -p1.carY);
@@ -143,6 +200,10 @@ function drawEverything() {
 
     for (var i = 0; i < trafficCars.length; i ++) {
         trafficCars[i].draw();
+    }
+
+    for (var i = 0; i < pointPoppers.length; i ++) {
+        pointPoppers[i].draw();
     }
 
     canvasContext.restore();
